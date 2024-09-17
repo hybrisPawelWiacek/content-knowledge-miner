@@ -5,6 +5,7 @@ from services.youtube_service import get_video_id, get_video_metadata, check_cap
 from services.transcription_service import transcribe_audio
 from services.airtable_service import get_user_inputs, save_video_data
 import os
+from datetime import datetime  # Add this import
 
 main = Blueprint('main', __name__)
 
@@ -41,6 +42,11 @@ def process_video():
             'Description': metadata['snippet']['description'],
             'Transcript Text': transcription,
             # Add other fields as needed
+            'Published At': datetime.strptime(metadata['snippet']['publishedAt'], '%Y-%m-%dT%H:%M:%SZ').strftime('%m/%d/%Y'),
+            'Duration': metadata['contentDetails']['duration'],
+            'View Count': int(metadata['statistics'].get('viewCount', 0)),
+            'Like Count': int(metadata['statistics'].get('likeCount', 0)),
+            'Comment Count': int(metadata['statistics'].get('commentCount', 0)),
         }
 
         # Save video data to Airtable
