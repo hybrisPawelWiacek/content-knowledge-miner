@@ -3,6 +3,7 @@
 from flask import Blueprint, request, jsonify
 from services.youtube_service import get_video_id, get_video_metadata, check_captions_available, download_audio
 from services.transcription_service import transcribe_audio
+from services.airtable_service import get_user_inputs, save_video_data
 import os
 
 main = Blueprint('main', __name__)
@@ -30,11 +31,27 @@ def process_video():
             else:
                 transcription = 'Audio download failed.'
 
-        # For now, return the metadata and transcription
+        # Get user inputs from Airtable
+        user_inputs = get_user_inputs(video_id)
+
+        # Prepare data to save to Airtable
+        video_data = {
+            'Video ID': video_id,
+            'Title': metadata['snippet']['title'],
+            'Description': metadata['snippet']['description'],
+            'Transcript Text': transcription,
+            # Add other fields as needed
+        }
+
+        # Save video data to Airtable
+        save_video_data(video_data)
+
+        # For now, return the metadata, transcription, and user inputs
         response = {
             'video_id': video_id,
             'metadata': metadata,
-            'transcription': transcription
+            'transcription': transcription,
+            'user_inputs': user_inputs
         }
         return jsonify(response)
     except Exception as e:

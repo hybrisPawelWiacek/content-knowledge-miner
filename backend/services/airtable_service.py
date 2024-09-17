@@ -1,0 +1,38 @@
+# /backend/services/airtable_service.py
+
+import os
+from airtable import Airtable
+from config import Config
+
+AIRTABLE_API_KEY = Config.AIRTABLE_API_KEY
+AIRTABLE_BASE_ID = Config.AIRTABLE_BASE_ID
+
+videos_table = Airtable(AIRTABLE_BASE_ID, 'Videos', AIRTABLE_API_KEY)
+user_inputs_table = Airtable(AIRTABLE_BASE_ID, 'UserInputs', AIRTABLE_API_KEY)
+
+def get_user_inputs(video_id):
+    """
+    Retrieves user-provided inputs for a specific video from the UserInputs table.
+    """
+    records = user_inputs_table.get_all(
+        view='Grid view',
+        formula=f"{{Video ID}} = '{video_id}'"
+    )
+    return records
+
+def save_video_data(video_data):
+    """
+    Saves or updates video data in the Videos table.
+    """
+    # Check if the video already exists
+    records = videos_table.get_all(
+        view='Grid view',
+        formula=f"{{Video ID}} = '{video_data['Video ID']}'"
+    )
+    if records:
+        # Update existing record
+        record_id = records[0]['id']
+        videos_table.update(record_id, video_data)
+    else:
+        # Create new record
+        videos_table.insert(video_data)
