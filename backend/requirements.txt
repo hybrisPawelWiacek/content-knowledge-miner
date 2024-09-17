@@ -8,3 +8,4 @@ airtable-python-wrapper
 google-cloud-storage
 pytube
 anthropic
+pydub

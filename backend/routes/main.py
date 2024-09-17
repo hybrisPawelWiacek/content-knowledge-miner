@@ -2,6 +2,8 @@
 
 from flask import Blueprint, request, jsonify
 from services.youtube_service import get_video_id, get_video_metadata, check_captions_available, download_audio
+from services.transcription_service import transcribe_audio
+import os
 
 main = Blueprint('main', __name__)
 
@@ -15,11 +17,24 @@ def process_video():
         metadata = get_video_metadata(video_id)
         captions_available = check_captions_available(video_id)
 
-        # For now, we'll just return the metadata and captions availability
+        if captions_available:
+            # TODO: Fetch captions and use them as transcription
+            transcription = 'Captions are available but fetching captions is not yet implemented.'
+        else:
+            # Download audio and perform transcription
+            audio_file_path = download_audio(video_url, output_path='downloads/')
+            if audio_file_path:
+                transcription = transcribe_audio(audio_file_path)
+                # Delete the audio file after transcription
+                os.remove(audio_file_path)
+            else:
+                transcription = 'Audio download failed.'
+
+        # For now, return the metadata and transcription
         response = {
             'video_id': video_id,
             'metadata': metadata,
-            'captions_available': captions_available
+            'transcription': transcription
         }
         return jsonify(response)
     except Exception as e:

@@ -50,15 +50,20 @@ def check_captions_available(video_id):
 
 def download_audio(video_url, output_path='downloads/'):
     """
-    Downloads the audio of a YouTube video.
+    Downloads the audio of a YouTube video and converts it to WAV format.
     """
     try:
         yt = YouTube(video_url)
         audio_stream = yt.streams.filter(only_audio=True).first()
         if not os.path.exists(output_path):
             os.makedirs(output_path)
-        output_file = audio_stream.download(output_path=output_path)
-        return output_file
+        temp_file = audio_stream.download(output_path=output_path)
+        # Convert to WAV format
+        base, ext = os.path.splitext(temp_file)
+        wav_file = f"{base}.wav"
+        AudioSegment.from_file(temp_file).export(wav_file, format='wav')
+        os.remove(temp_file)  # Remove the original file
+        return wav_file
     except Exception as e:
         print(f"An error occurred while downloading audio: {e}")
         return None
