@@ -1,2 +1,7 @@
 python-dotenv
 airtable-python-wrapper
+google-api-python-client
+google-auth
+google-cloud-speech
+openai
+anthropic
