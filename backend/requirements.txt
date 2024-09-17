@@ -1,7 +1,10 @@
+Flask
 python-dotenv
-airtable-python-wrapper
 google-api-python-client
 google-auth
 google-cloud-speech
 openai
+airtable-python-wrapper
+google-cloud-storage
+pytube
 anthropic
