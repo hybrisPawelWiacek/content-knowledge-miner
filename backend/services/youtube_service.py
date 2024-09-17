@@ -5,6 +5,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from pytube import YouTube
 from config import Config
+from pydub import AudioSegment
 
 YOUTUBE_API_KEY = Config.YOUTUBE_API_KEY
 
