@@ -3,6 +3,8 @@
 import os
 from airtable import Airtable
 from config import Config
+from datetime import datetime
+from models import VideoMetadata
 
 AIRTABLE_API_KEY = Config.AIRTABLE_API_KEY
 AIRTABLE_BASE_ID = Config.AIRTABLE_BASE_ID
@@ -20,19 +22,21 @@ def get_user_inputs(video_id):
     )
     return records
 
-def save_video_data(video_data):
+def save_video_data(video_metadata: VideoMetadata):
     """
     Saves or updates video data in the Videos table.
     """
+    # Prepare data in Airtable format
+    airtable_fields = video_metadata.to_airtable_fields()
     # Check if the video already exists
     records = videos_table.get_all(
         view='Grid view',
-        formula=f"{{Video ID}} = '{video_data['Video ID']}'"
+        formula=f"{{Video ID}} = '{video_metadata.video_id}'"
     )
     if records:
         # Update existing record
         record_id = records[0]['id']
-        videos_table.update(record_id, video_data)
+        videos_table.update(record_id, airtable_fields)
     else:
         # Create new record
-        videos_table.insert(video_data)
+        videos_table.insert(airtable_fields)
