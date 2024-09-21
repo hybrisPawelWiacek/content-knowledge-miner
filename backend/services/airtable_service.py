@@ -55,11 +55,7 @@ def save_summary(summary: Summary):
     video_record_id = video_records[0]['id']
 
     # Prepare data in Airtable format
-    airtable_fields = {
-        'Video ID': [video_record_id],  # This should be an array with one record ID
-        'Summary Text': summary.summary_text,
-        'Key Topics': ', '.join(summary.key_topics)  # Assuming this is a text field, not a linked record
-    }
+    airtable_fields = summary.to_airtable_fields() 
 
     # Check if the summary already exists
     records = summaries_table.get_all(
