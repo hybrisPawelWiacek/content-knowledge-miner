@@ -1,8 +1,9 @@
 # /backend/models/models.py
 
 from dataclasses import dataclass, field
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional, Dict, Any
+import json
 
 @dataclass
 class VideoMetadata:
@@ -16,6 +17,7 @@ class VideoMetadata:
     comment_count: int
     transcript_text: str = ''
     key_topics: List[str] = field(default_factory=list)
+    raw_data: Dict[str, Any] = field(default_factory=dict)  # New field
 
     def to_airtable_fields(self):
         return {
@@ -28,6 +30,7 @@ class VideoMetadata:
             'Like Count': self.like_count,
             'Comment Count': self.comment_count,
             'Transcript Text': self.transcript_text,
+            'Raw Data': json.dumps(self.raw_data)  # Convert dict to JSON string
             # Add other fields as needed
         }
 

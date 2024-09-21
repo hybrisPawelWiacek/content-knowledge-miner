@@ -99,7 +99,8 @@ def get_video_metadata(video_id):
                 like_count=int(item['statistics'].get('likeCount', 0)),
                 comment_count=int(item['statistics'].get('commentCount', 0)),
                 transcript_text='',  # Will be filled later
-                key_topics=[]
+                key_topics=[],  
+                raw_data=item
             )
 
             return metadata
