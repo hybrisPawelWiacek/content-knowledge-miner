@@ -47,9 +47,9 @@ class Summary:
     video_id: str
     summary_text: str
     key_topics: List[str]
-    def to_airtable_fields(self) -> Dict[str, Any]:
+    def to_airtable_fields(self, video_record_id: str) -> Dict[str, Any]:
         return {
-            'Video ID': [self.video_id],  # This should be an array with one record ID
+            'Video ID': [video_record_id],  # This should be an array with one record ID
             'Summary Text': self.summary_text,
             'Key Topics': ', '.join(self.key_topics)  # Assuming this is a text field, not a linked record
         }

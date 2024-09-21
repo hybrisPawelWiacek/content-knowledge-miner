@@ -55,12 +55,12 @@ def save_summary(summary: Summary):
     video_record_id = video_records[0]['id']
 
     # Prepare data in Airtable format
-    airtable_fields = summary.to_airtable_fields() 
+    airtable_fields = summary.to_airtable_fields(video_record_id)
 
     # Check if the summary already exists
     records = summaries_table.get_all(
         view='Grid view',
-        formula=f"RECORD_ID({{Video ID}}) = '{video_record_id}'"
+        formula=f"{{Video ID}} = '{video_record_id}'"
     )
 
     if records:
