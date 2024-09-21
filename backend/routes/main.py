@@ -3,10 +3,11 @@
 from flask import Blueprint, request, jsonify
 from services.youtube_service import get_video_id, get_video_metadata, check_captions_available, download_audio, get_caption_track, get_captions_pytube
 from services.transcription_service import transcribe_audio
-from services.airtable_service import get_user_inputs, save_video_data
+from services.airtable_service import get_user_inputs, save_video_data, save_summary
 import os
 from datetime import datetime
-from models.models import VideoMetadata, UserInput
+from models.models import VideoMetadata, UserInput, Summary
+from services.llm_service import generate_summary
 
 main = Blueprint('main', __name__)
 
@@ -14,6 +15,7 @@ main = Blueprint('main', __name__)
 def process_video():
     data = request.get_json()
     video_url = data.get('video_url')
+    model_choice = data.get('model', 'openai-gpt-3.5-turbo')
 
     try:
         video_id = get_video_id(video_url)
@@ -66,11 +68,27 @@ def process_video():
         # Save video data to Airtable
         save_video_data(metadata)
 
+        # Generate summary using the transcript
+        prompt = f"Please provide a professional summary of the following content:\n\n{metadata.transcript_text}\n\nSummary should be around 500 words, include key points, and be formatted as formatted text."
+          # Generate summary using the specified model
+        summary_text = generate_summary(prompt, model=model_choice)
+
+        # Create a Summary instance
+        summary = Summary(
+            video_id=video_id,
+            summary_text=summary_text,
+            key_topics=[]  # We can implement key topic extraction later
+        )
+
+        # Save the summary to Airtable or other storage
+        save_summary(summary)
+
         # Prepare response data
         response = {
             'video_id': video_id,
             'metadata': metadata.__dict__,
-            'user_inputs': [ui.__dict__ for ui in user_inputs]
+            'user_inputs': [ui.__dict__ for ui in user_inputs],
+            'summary': summary.__dict__
         }
 
         return jsonify(response)
