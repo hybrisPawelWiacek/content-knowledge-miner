@@ -12,3 +12,4 @@ pydub
 google-auth-oauthlib 
 google-api-python-client
 crewai
+pytest
