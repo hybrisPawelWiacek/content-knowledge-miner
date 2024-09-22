@@ -19,9 +19,30 @@ A Proof of Concept for mining knowledge from YouTube videos using AI agents.
     - `js/`
 - **docs/**: Project documentation.
 
+## Testing
+
+To run the backend unit tests, execute:
+
+```bash
+python -m unittest discover -s backend/tests
+
+
 ## Getting Started
 
 Instructions on setting up the project will be added as development progresses.
+
+#########################################################
+1. IN Task 2.3: Integrate Google Cloud Speech-to-Text we had following outstanding task:
+Handle Fetching of Available Captions (Optional)
+Note: Implementing the retrieval of captions from YouTube is optional at this stage due to complexity. For now, you can leave a placeholder or return a message indicating that this feature is not yet implemented.
+
+Question - do you believe its good moment to implement that outstanding feature?
+
+
+#############
+Update README.md
+
+Include instructions on setting up Airtable and any necessary configurations.
 
 
 ## Airtable Setup
@@ -138,3 +159,19 @@ Field Type: Rating
 Style: Stars
 
 Maximum: 5
+
+
+7. Update Documentation
+
+Update README.md
+
+Include instructions on how to specify different models when making requests.
+Document any prerequisites for using Anthropic's API.
+
+7. Update Documentation
+
+Update README.md
+
+Document the addition of the raw_data field in the VideoMetadata data model.
+Explain the purpose of storing raw JSON data.
+Provide instructions on how to access and interpret the Raw Data field in Airtable.

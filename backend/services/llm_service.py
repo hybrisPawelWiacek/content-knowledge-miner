@@ -36,7 +36,8 @@ if Config.ANTHROPIC_API_KEY and Anthropic:
 else:
     anthropic_client = None
 
-def generate_summary(prompt, model='gpt-3.5-turbo'):
+def generate_summary(prompt, model='gpt-4o-mini'):
+    logger.info(f"Generating summary using model: {model}")
     try:
         for provider, models in MODEL_INFO.items():
             if model in models:
@@ -44,11 +45,14 @@ def generate_summary(prompt, model='gpt-3.5-turbo'):
                     return generate_openai_summary(prompt, model=model)
                 elif provider == 'anthropic' and anthropic_client:
                     return generate_anthropic_summary(prompt, model=model)
+        logger.error(f"Unsupported model specified: {model}")
         raise ValueError('Unsupported model specified')
     except Exception as e:
+        logger.error(f"Error generating summary: {str(e)}")
         raise ValueError(f'Error generating summary: {str(e)}')
 
-def generate_openai_summary(prompt, model='gpt-3.5-turbo'):
+def generate_openai_summary(prompt, model='gpt-4o-mini'):
+    logger.info(f"Generating OpenAI summary using model: {model}")
     client = OpenAI(api_key=openai_api_key)  
     
     try:
@@ -60,13 +64,16 @@ def generate_openai_summary(prompt, model='gpt-3.5-turbo'):
         )
         
         summary = response.choices[0].message.content
+        logger.info("OpenAI summary generated successfully")
         return summary
     except Exception as e:
         logger.error(f"OpenAI API error: {e}")
         return 'An error occurred while generating the summary with OpenAI.'
 
 def generate_anthropic_summary(prompt, model='anthropic-claude-1'):
+    logger.info(f"Generating Anthropic summary using model: {model}")
     if not anthropic_client:
+        logger.error("Anthropic client not initialized")
         raise ValueError('Anthropic client not initialized.')
     try:
         response = anthropic_client.completions.create(
@@ -75,6 +82,7 @@ def generate_anthropic_summary(prompt, model='anthropic-claude-1'):
             max_tokens_to_sample=500
         )
         summary = response.completion
+        logger.info("Anthropic summary generated successfully")
         return summary
     except Exception as e:
         logger.error(f"Anthropic API error: {e}")

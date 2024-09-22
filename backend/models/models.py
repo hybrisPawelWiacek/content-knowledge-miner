@@ -4,6 +4,9 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Optional, Dict, Any
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class VideoMetadata:
@@ -20,6 +23,7 @@ class VideoMetadata:
     raw_data: Dict[str, Any] = field(default_factory=dict)  # New field
 
     def to_airtable_fields(self):
+        logger.info(f"Converting VideoMetadata to Airtable fields for video ID: {self.video_id}")
         return {
             'Video ID': self.video_id,
             'Title': self.title,
@@ -47,9 +51,10 @@ class Summary:
     video_id: str
     summary_text: str
     key_topics: List[str]
-    def to_airtable_fields(self, video_record_id: str) -> Dict[str, Any]:
+    def to_airtable_fields(self) -> Dict[str, Any]:
+        logger.info(f"Converting Summary to Airtable fields for video ID: {self.video_id}")
         return {
-            'Video ID': [video_record_id],  # This should be an array with one record ID
+            'Video ID': [self.video_id],  # This should be an array with one video ID
             'Summary Text': self.summary_text,
             'Key Topics': ', '.join(self.key_topics)  # Assuming this is a text field, not a linked record
         }
